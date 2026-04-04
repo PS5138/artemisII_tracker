@@ -38,8 +38,7 @@ export function SpaceScene() {
       camera={{ position: [0, 0.4, 2.2], fov: 50 }}
       style={{ background: 'transparent' }}
     >
-      {/* Brighter ambient so the dark sides of bodies are visible */}
-      <ambientLight intensity={0.45} />
+      <ambientLight intensity={0.65} />
       {/* Primary sun — offset along X axis */}
       <directionalLight position={[50, 5, 10]} intensity={2.2} color="#fff8f0" />
       {/* Soft fill light from the camera side so textures stay readable */}

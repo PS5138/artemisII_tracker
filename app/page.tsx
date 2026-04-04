@@ -11,33 +11,11 @@ import { SpaceWeatherPanel } from '@/components/panels/SpaceWeatherPanel'
 import { CrewPanel } from '@/components/panels/CrewPanel'
 import { ContextFacts } from '@/components/panels/ContextFacts'
 import { ApolloCmp } from '@/components/panels/ApolloCmp'
-import { useTrackerStore } from '@/lib/store'
-
 const SpaceScene = dynamic(
   () => import('@/components/scene/SpaceScene').then((m) => m.SpaceScene),
   { ssr: false }
 )
 
-function CameraControls() {
-  const { cameraMode, setCameraMode } = useTrackerStore()
-  return (
-    <div className="flex gap-2">
-      {(['overview', 'orion', 'moon'] as const).map((mode) => (
-        <button
-          key={mode}
-          onClick={() => setCameraMode(mode)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium uppercase tracking-widest transition-all
-            ${cameraMode === mode
-              ? 'bg-cyan-500 text-black'
-              : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-white'
-            }`}
-        >
-          {mode}
-        </button>
-      ))}
-    </div>
-  )
-}
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -66,11 +44,6 @@ export default function Home() {
           <div className="flex-1 relative min-w-0">
             <div className="absolute inset-0">
               <SpaceScene />
-            </div>
-
-            {/* Camera controls overlay */}
-            <div className="absolute bottom-4 left-4 z-10">
-              <CameraControls />
             </div>
 
             {/* Sidebar toggle — sits at the right edge of the scene */}
