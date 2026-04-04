@@ -2,6 +2,7 @@
 
 import { useTrackerStore } from '@/lib/store'
 import type { WeatherStatus } from '@/lib/spaceweather'
+import { InfoPopup } from './InfoPopup'
 
 const STATUS_CONFIG: Record<WeatherStatus, { color: string; bg: string; border: string; label: string }> = {
   GREEN: { color: 'text-green-400', bg: 'bg-green-500', border: 'border-green-700/50', label: 'All Clear' },
@@ -67,7 +68,27 @@ export function SpaceWeatherPanel() {
     <div className={`rounded-xl bg-zinc-900/70 border p-5 backdrop-blur-sm ${cfg.border}`}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-cyan-400">Space Weather</h2>
-        <LastUpdated ts={lastFetch} />
+        <div className="flex items-center gap-2">
+          <LastUpdated ts={lastFetch} />
+          <InfoPopup content={
+            <div className="space-y-3">
+              <p className="text-zinc-200 font-medium">Three live NOAA SWPC feeds, polled every 5 minutes:</p>
+              <div>
+                <p className="text-zinc-400 font-medium mb-0.5">Kp Index</p>
+                <p>Real-time geomagnetic activity from <span className="text-zinc-200">planetary_k_index_1m.json</span>. Scale 0–9. ≥4 = Elevated, ≥7 = Severe storm.</p>
+              </div>
+              <div>
+                <p className="text-zinc-400 font-medium mb-0.5">Solar Flares</p>
+                <p>X-ray flux from GOES satellites via <span className="text-zinc-200">xrays-7-day.json</span>. Events in the last 24h classed as M (≥10⁻⁵ W/m²) or X (≥10⁻⁴ W/m²).</p>
+              </div>
+              <div>
+                <p className="text-zinc-400 font-medium mb-0.5">Particle Flux</p>
+                <p>Energetic electron count from the ACE spacecraft at the L1 Lagrange point via <span className="text-zinc-200">ace_epam_5m.json</span>. Elevated readings (&gt;1,000 pfu) indicate increased radiation.</p>
+              </div>
+              <p className="text-zinc-500 border-t border-zinc-700 pt-2">GREEN: all quiet · AMBER: Kp≥4 or M-flare · RED: Kp≥7, X-flare, or particle storm</p>
+            </div>
+          } />
+        </div>
       </div>
 
       <div className="flex items-center gap-3 mb-4">
