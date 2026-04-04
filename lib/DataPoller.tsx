@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useTrackerStore } from './store'
+import { isMissionOver } from './mission'
 import type { TelemetryData } from './horizons'
 import type { SpaceWeatherData } from './spaceweather'
 
@@ -12,6 +13,9 @@ export function DataPoller() {
   const { setTelemetry, setTelemetryError, setWeather, setWeatherError } = useTrackerStore()
 
   useEffect(() => {
+    // Don't poll at all once the mission is over
+    if (isMissionOver()) return
+
     async function pollTelemetry() {
       try {
         const res = await fetch('/api/telemetry')
@@ -40,7 +44,6 @@ export function DataPoller() {
       }
     }
 
-    // Fetch immediately
     pollTelemetry()
     pollWeather()
 

@@ -74,3 +74,7 @@ export function getNextMilestone(now = new Date()) {
 export function getMilestoneDate(milestone: (typeof MILESTONES)[number]): Date {
   return new Date(MISSION.launch.getTime() + milestone.offsetHrs * 3600000)
 }
+
+export function isMissionOver(now = new Date()): boolean {
+  return now.getTime() > MISSION.splashdown.getTime()
+}

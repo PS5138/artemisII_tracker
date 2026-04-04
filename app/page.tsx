@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
+import { isMissionOver } from '@/lib/mission'
 import { DataPoller } from '@/lib/DataPoller'
 import { TelemetryPanel } from '@/components/panels/TelemetryPanel'
 import { METClock } from '@/components/panels/METClock'
@@ -19,6 +20,7 @@ const SpaceScene = dynamic(
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const missionOver = isMissionOver()
 
   return (
     <>
@@ -28,9 +30,15 @@ export default function Home() {
         {/* Header */}
         <header className="border-b border-zinc-800/60 px-6 py-3 flex items-center justify-between bg-black/90 flex-shrink-0 z-50">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            {missionOver
+              ? <div className="w-2 h-2 rounded-full bg-zinc-500" />
+              : <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            }
             <span className="text-sm font-semibold tracking-widest uppercase text-white">Artemis II</span>
-            <span className="text-xs text-zinc-500 tracking-widest uppercase hidden sm:block">Live Mission Tracker</span>
+            {missionOver
+              ? <span className="text-xs text-zinc-500 tracking-widest uppercase">Mission Complete</span>
+              : <span className="text-xs text-zinc-500 tracking-widest uppercase hidden sm:block">Live Mission Tracker</span>
+            }
           </div>
           <div className="text-xs text-zinc-500">
             Data: JPL Horizons · NOAA SWPC
