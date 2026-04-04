@@ -31,7 +31,7 @@ export function InfoPopup({ content }: Props) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-6 z-50 w-64 rounded-xl bg-zinc-900 border border-zinc-700 shadow-2xl p-4 text-xs text-zinc-300 leading-relaxed">
+        <div className="absolute right-0 top-6 z-50 w-64 max-h-80 overflow-y-auto rounded-xl bg-zinc-900 border border-zinc-700 shadow-2xl p-4 text-xs text-zinc-300 leading-relaxed">
           {content}
         </div>
       )}
