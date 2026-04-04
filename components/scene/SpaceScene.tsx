@@ -11,41 +11,44 @@ import { TrajectoryPath } from './TrajectoryPath'
 import { CameraController } from './CameraController'
 import { useTrackerStore } from '@/lib/store'
 
-// 1 scene unit = 50,000 km (compressed)
-// True-scale mode keeps the same position scale but shrinks body radii to real proportions
-const COMPRESSED_SCALE = 1 / 50000
-const TRUE_SCALE = COMPRESSED_SCALE * 0.1   // positions ~10× tighter — bodies also shrink
+// 1 scene unit = 500,000 km (true scale)
+// Earth radius  = 0.1274 scene units
+// Moon distance ≈ 0.77 scene units
+// Orion max     ≈ 0.80 scene units
+const TRUE_SCALE = 1 / 500000
 
 export function SpaceScene() {
   const telemetry = useTrackerStore((s) => s.telemetry)
-  const showTrueScale = useTrackerStore((s) => s.showTrueScale)
   const orbitRef = useRef(null)
 
-  const scale = showTrueScale ? TRUE_SCALE : COMPRESSED_SCALE
-
-  // Memoize positions so CameraController's useEffect only fires when values actually change
   const orionPos = useMemo<[number, number, number]>(() => telemetry
-    ? [telemetry.orion.x * scale, telemetry.orion.z * scale, -telemetry.orion.y * scale]
-    : [0, 0, 6],
-  [telemetry?.orion.x, telemetry?.orion.y, telemetry?.orion.z, scale])
+    ? [telemetry.orion.x * TRUE_SCALE, telemetry.orion.z * TRUE_SCALE, -telemetry.orion.y * TRUE_SCALE]
+    : [0, 0, 0.8],
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [telemetry?.orion.x, telemetry?.orion.y, telemetry?.orion.z])
 
   const moonPos = useMemo<[number, number, number]>(() => telemetry
-    ? [telemetry.moon.x * scale, telemetry.moon.z * scale, -telemetry.moon.y * scale]
-    : [8, 0, 0],
-  [telemetry?.moon.x, telemetry?.moon.y, telemetry?.moon.z, scale])
+    ? [telemetry.moon.x * TRUE_SCALE, telemetry.moon.z * TRUE_SCALE, -telemetry.moon.y * TRUE_SCALE]
+    : [0.77, 0, 0],
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [telemetry?.moon.x, telemetry?.moon.y, telemetry?.moon.z])
 
   return (
     <Canvas
-      camera={{ position: [0, 4, 18], fov: 45 }}
+      camera={{ position: [0, 0.4, 2.2], fov: 50 }}
       style={{ background: 'transparent' }}
     >
-      <ambientLight intensity={0.05} />
-      <directionalLight position={[50, 0, 0]} intensity={1.2} color="#fff5e0" />
+      {/* Brighter ambient so the dark sides of bodies are visible */}
+      <ambientLight intensity={0.45} />
+      {/* Primary sun — offset along X axis */}
+      <directionalLight position={[50, 5, 10]} intensity={2.2} color="#fff8f0" />
+      {/* Soft fill light from the camera side so textures stay readable */}
+      <directionalLight position={[0, 2, 20]} intensity={0.5} color="#cce8ff" />
 
       <Suspense fallback={null}>
-        <Stars radius={300} depth={60} count={5000} factor={4} fade speed={0.5} />
-        <EarthGlobe position={[0, 0, 0]} trueScale={showTrueScale} />
-        <MoonGlobe position={moonPos} trueScale={showTrueScale} />
+        <Stars radius={200} depth={80} count={6000} factor={3} fade speed={0.3} />
+        <EarthGlobe position={[0, 0, 0]} />
+        <MoonGlobe position={moonPos} />
         <OrionMarker position={orionPos} />
         <TrajectoryPath />
       </Suspense>
@@ -57,8 +60,8 @@ export function SpaceScene() {
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
-        minDistance={0.5}
-        maxDistance={60}
+        minDistance={0.01}
+        maxDistance={8}
         autoRotate={false}
       />
     </Canvas>

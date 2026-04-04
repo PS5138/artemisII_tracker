@@ -12,6 +12,8 @@ interface Props {
   orbitRef: React.RefObject<any>
 }
 
+// All targets tuned for TRUE_SCALE (1/500000):
+// Earth radius 0.127, Moon ~0.77 units away, Orion 0.2–0.8 units from Earth
 function getCameraTarget(
   mode: 'overview' | 'orion' | 'moon',
   orionPos: [number, number, number],
@@ -19,44 +21,37 @@ function getCameraTarget(
 ): { camPos: THREE.Vector3; lookAt: THREE.Vector3 } {
   if (mode === 'overview') {
     return {
-      camPos: new THREE.Vector3(0, 4, 18),
+      camPos: new THREE.Vector3(0, 0.4, 2.2),
       lookAt: new THREE.Vector3(0, 0, 0),
     }
   }
 
   if (mode === 'orion') {
     const op = new THREE.Vector3(...orionPos)
-    // Pull camera back along the Earth→Orion direction, raise slightly
+    // Pull camera back along Earth→Orion axis, raise slightly
     const dir = op.clone().normalize()
-    const offset = dir.clone().multiplyScalar(-1.8)
-    offset.y += 0.4
-    return {
-      camPos: op.clone().add(offset),
-      lookAt: op,
-    }
+    const offset = dir.clone().multiplyScalar(-0.15)
+    offset.y += 0.05
+    return { camPos: op.clone().add(offset), lookAt: op.clone() }
   }
 
   // moon
   const mp = new THREE.Vector3(...moonPos)
   const dir = mp.clone().normalize()
-  const offset = dir.clone().multiplyScalar(-2.5)
-  offset.y += 0.8
-  return {
-    camPos: mp.clone().add(offset),
-    lookAt: mp,
-  }
+  const offset = dir.clone().multiplyScalar(-0.25)
+  offset.y += 0.08
+  return { camPos: mp.clone().add(offset), lookAt: mp.clone() }
 }
 
 export function CameraController({ orionPos, moonPos, orbitRef }: Props) {
   const cameraMode = useTrackerStore((s) => s.cameraMode)
   const { camera } = useThree()
 
-  const targetCamPos = useRef(new THREE.Vector3(0, 4, 18))
+  const targetCamPos = useRef(new THREE.Vector3(0, 0.4, 2.2))
   const targetLookAt = useRef(new THREE.Vector3(0, 0, 0))
   const currentLookAt = useRef(new THREE.Vector3(0, 0, 0))
   const isAnimating = useRef(false)
 
-  // When mode or Orion/Moon positions change, update targets
   useEffect(() => {
     const { camPos, lookAt } = getCameraTarget(cameraMode, orionPos, moonPos)
     targetCamPos.current.copy(camPos)
@@ -68,15 +63,12 @@ export function CameraController({ orionPos, moonPos, orbitRef }: Props) {
   useFrame((_, delta) => {
     if (!isAnimating.current) return
 
-    // Exponential decay lerp — feels smooth
     const k = 1 - Math.exp(-5 * delta)
-
     camera.position.lerp(targetCamPos.current, k)
     currentLookAt.current.lerp(targetLookAt.current, k)
     camera.lookAt(currentLookAt.current)
 
-    const dist = camera.position.distanceTo(targetCamPos.current)
-    if (dist < 0.02) {
+    if (camera.position.distanceTo(targetCamPos.current) < 0.002) {
       camera.position.copy(targetCamPos.current)
       currentLookAt.current.copy(targetLookAt.current)
       camera.lookAt(currentLookAt.current)

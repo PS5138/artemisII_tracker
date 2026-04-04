@@ -24,15 +24,15 @@ export function OrionMarker({ position }: Props) {
 
   return (
     <group position={position}>
-      {/* Core marker */}
+      {/* Core marker — sized to be visible but smaller than Earth (0.127) */}
       <mesh ref={coreRef}>
-        <octahedronGeometry args={[0.08, 0]} />
-        <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={1} />
+        <octahedronGeometry args={[0.012, 0]} />
+        <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={2} />
       </mesh>
 
       {/* Pulsing glow */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[0.15, 16, 16]} />
+        <sphereGeometry args={[0.025, 16, 16]} />
         <meshStandardMaterial color="#00e5ff" transparent opacity={0.2} />
       </mesh>
 

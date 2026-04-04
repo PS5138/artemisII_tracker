@@ -5,17 +5,11 @@ import { useFrame } from '@react-three/fiber'
 import { Sphere, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 
-// True-scale Earth radius relative to the scene scale factor
-// At SCALE=1/50000, Earth surface = 6371/50000 = 0.1274 scene units
-export const EARTH_SCENE_RADIUS_TRUE = 0.1274
-export const EARTH_SCENE_RADIUS_COMPRESSED = 1.0
+// At TRUE_SCALE (1/500000): Earth radius = 6371/500000 = 0.01274 scene units
+// We inflate slightly for visibility while keeping the proportions clearly different from Moon
+export const EARTH_RADIUS = 0.1274
 
-interface Props {
-  position: [number, number, number]
-  trueScale?: boolean
-}
-
-function EarthMesh({ radius }: { radius: number }) {
+function EarthMesh() {
   const meshRef = useRef<THREE.Mesh>(null)
   const texture = useTexture('/textures/earth.jpg')
   const normalMap = useTexture('/textures/earth_normal.jpg')
@@ -26,21 +20,21 @@ function EarthMesh({ radius }: { radius: number }) {
 
   return (
     <>
-      <Sphere ref={meshRef} args={[radius, 64, 64]}>
+      <Sphere ref={meshRef} args={[EARTH_RADIUS, 64, 64]}>
         <meshStandardMaterial
           map={texture}
           normalMap={normalMap}
-          normalScale={new THREE.Vector2(0.8, 0.8)}
-          roughness={0.8}
+          normalScale={new THREE.Vector2(0.6, 0.6)}
+          roughness={0.75}
           metalness={0.05}
         />
       </Sphere>
       {/* Atmosphere glow */}
-      <Sphere args={[radius * 1.02, 32, 32]}>
+      <Sphere args={[EARTH_RADIUS * 1.04, 32, 32]}>
         <meshStandardMaterial
           color="#4da6ff"
           transparent
-          opacity={0.07}
+          opacity={0.1}
           side={THREE.BackSide}
         />
       </Sphere>
@@ -48,11 +42,10 @@ function EarthMesh({ radius }: { radius: number }) {
   )
 }
 
-export function EarthGlobe({ position, trueScale = false }: Props) {
-  const radius = trueScale ? EARTH_SCENE_RADIUS_TRUE : EARTH_SCENE_RADIUS_COMPRESSED
+export function EarthGlobe({ position }: { position: [number, number, number] }) {
   return (
     <group position={position}>
-      <EarthMesh radius={radius} />
+      <EarthMesh />
     </group>
   )
 }

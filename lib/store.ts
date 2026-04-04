@@ -14,7 +14,6 @@ interface TrackerState {
   lastTelemetryFetch: number | null
   lastWeatherFetch: number | null
   cameraMode: 'overview' | 'orion' | 'moon'
-  showTrueScale: boolean
   orionHistory: Array<{ x: number; y: number; z: number }>
   prevSpeed_kms: number | null
 
@@ -23,7 +22,6 @@ interface TrackerState {
   setWeather: (data: SpaceWeatherData) => void
   setWeatherError: (err: string) => void
   setCameraMode: (mode: 'overview' | 'orion' | 'moon') => void
-  toggleScale: () => void
 }
 
 export const useTrackerStore = create<TrackerState>((set, get) => ({
@@ -34,7 +32,6 @@ export const useTrackerStore = create<TrackerState>((set, get) => ({
   lastTelemetryFetch: null,
   lastWeatherFetch: null,
   cameraMode: 'overview',
-  showTrueScale: false,
   orionHistory: [],
   prevSpeed_kms: null,
 
@@ -57,5 +54,4 @@ export const useTrackerStore = create<TrackerState>((set, get) => ({
   setWeather: (data) => set({ weather: data, weatherError: null, lastWeatherFetch: Date.now() }),
   setWeatherError: (err) => set({ weatherError: err }),
   setCameraMode: (mode) => set({ cameraMode: mode }),
-  toggleScale: () => set((s) => ({ showTrueScale: !s.showTrueScale })),
 }))
