@@ -30,11 +30,21 @@ function useCountdown(targetDate: Date | null) {
   return countdown
 }
 
+// Tick elapsed hours once per second so completed milestones update in real time
+function useElapsedHrs() {
+  const [elapsedHrs, setElapsedHrs] = useState(() => getMissionElapsed().totalSeconds / 3600)
+  useEffect(() => {
+    const t = setInterval(() => setElapsedHrs(getMissionElapsed().totalSeconds / 3600), 1000)
+    return () => clearInterval(t)
+  }, [])
+  return elapsedHrs
+}
+
 export function MilestonePanel() {
+  const elapsedHrs = useElapsedHrs()
   const next = getNextMilestone()
   const nextDate = next ? getMilestoneDate(next) : null
   const countdown = useCountdown(nextDate)
-  const elapsedHrs = getMissionElapsed().totalSeconds / 3600
   const pad = (n: number) => String(n).padStart(2, '0')
 
   const completedIds = new Set(
@@ -56,6 +66,12 @@ export function MilestonePanel() {
         </div>
       )}
 
+      {!next && (
+        <div className="mb-5 p-4 rounded-lg bg-zinc-800/60 border border-zinc-700/40 text-sm text-zinc-400">
+          Mission complete — all milestones achieved.
+        </div>
+      )}
+
       <div className="relative">
         <div className="absolute left-2.5 top-0 bottom-0 w-px bg-zinc-700" />
         <div className="flex flex-col gap-4">
@@ -66,11 +82,17 @@ export function MilestonePanel() {
               <div key={m.id} className="flex items-start gap-4 pl-7 relative">
                 <div className={`absolute left-0 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
                   ${done ? 'bg-cyan-500 border-cyan-500' : isNext ? 'bg-zinc-900 border-cyan-400' : 'bg-zinc-900 border-zinc-600'}`}>
-                  {done && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                  {done && (
+                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
                   {isNext && <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />}
                 </div>
                 <div>
-                  <div className={`text-sm font-medium ${done ? 'text-zinc-400' : isNext ? 'text-white' : 'text-zinc-300'}`}>{m.label}</div>
+                  <div className={`text-sm font-medium ${done ? 'text-zinc-400' : isNext ? 'text-white' : 'text-zinc-300'}`}>
+                    {m.label}
+                  </div>
                   <div className="text-xs text-zinc-500">{m.description}</div>
                 </div>
               </div>

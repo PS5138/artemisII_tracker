@@ -1,21 +1,30 @@
 'use client'
 
-import { MISSION } from '@/lib/mission'
-import { getMissionElapsed } from '@/lib/mission'
+import { useEffect, useState } from 'react'
+import { MISSION, getMissionElapsed } from '@/lib/mission'
 
 function getCurrentActivity(elapsedHrs: number): string {
   if (elapsedHrs < 1.5) return 'Launch and ascent'
-  if (elapsedHrs < 6) return 'Spacecraft checkout and systems verification'
-  if (elapsedHrs < 24) return 'Translunar coast — trajectory monitoring'
-  if (elapsedHrs < 48) return 'Translunar coast — science and observations'
-  if (elapsedHrs < 66) return 'Approaching lunar sphere of influence'
-  if (elapsedHrs < 78) return 'Lunar proximity operations'
-  if (elapsedHrs < 90) return 'Return trajectory burn and Earth-bound coast'
+  if (elapsedHrs < 6)   return 'Spacecraft checkout and systems verification'
+  if (elapsedHrs < 24)  return 'Translunar coast — trajectory monitoring'
+  if (elapsedHrs < 48)  return 'Translunar coast — science and observations'
+  if (elapsedHrs < 66)  return 'Approaching lunar sphere of influence'
+  if (elapsedHrs < 78)  return 'Lunar proximity operations'
+  if (elapsedHrs < 90)  return 'Return trajectory burn and Earth-bound coast'
   return 'Coast phase — Earth approach'
 }
 
 export function CrewPanel() {
-  const elapsedHrs = getMissionElapsed().totalSeconds / 3600
+  const [elapsedHrs, setElapsedHrs] = useState(() => getMissionElapsed().totalSeconds / 3600)
+
+  useEffect(() => {
+    // Update activity label every minute
+    const t = setInterval(() => {
+      setElapsedHrs(getMissionElapsed().totalSeconds / 3600)
+    }, 60_000)
+    return () => clearInterval(t)
+  }, [])
+
   const activity = getCurrentActivity(elapsedHrs)
 
   return (

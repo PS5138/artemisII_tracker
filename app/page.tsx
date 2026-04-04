@@ -9,6 +9,7 @@ import { MilestonePanel } from '@/components/panels/MilestonePanel'
 import { SpaceWeatherPanel } from '@/components/panels/SpaceWeatherPanel'
 import { CrewPanel } from '@/components/panels/CrewPanel'
 import { ContextFacts } from '@/components/panels/ContextFacts'
+import { ApolloCmp } from '@/components/panels/ApolloCmp'
 import { useTrackerStore } from '@/lib/store'
 
 // Three.js scene must be client-side only (no SSR)
@@ -83,6 +84,7 @@ export default function Home() {
               <RecordTracker />
               <ContextFacts />
               <SpaceWeatherPanel />
+              <ApolloCmp />
               <MilestonePanel />
               <CrewPanel />
             </div>
