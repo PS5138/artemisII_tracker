@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Stars } from '@react-three/drei'
 import { Suspense } from 'react'
@@ -23,14 +23,16 @@ export function SpaceScene() {
 
   const scale = showTrueScale ? TRUE_SCALE : COMPRESSED_SCALE
 
-  // Orion position: Horizons uses Y-up ecliptic; map Z→up for Three.js
-  const orionPos: [number, number, number] = telemetry
+  // Memoize positions so CameraController's useEffect only fires when values actually change
+  const orionPos = useMemo<[number, number, number]>(() => telemetry
     ? [telemetry.orion.x * scale, telemetry.orion.z * scale, -telemetry.orion.y * scale]
-    : [0, 0, 6]
+    : [0, 0, 6],
+  [telemetry?.orion.x, telemetry?.orion.y, telemetry?.orion.z, scale])
 
-  const moonPos: [number, number, number] = telemetry
+  const moonPos = useMemo<[number, number, number]>(() => telemetry
     ? [telemetry.moon.x * scale, telemetry.moon.z * scale, -telemetry.moon.y * scale]
-    : [8, 0, 0]
+    : [8, 0, 0],
+  [telemetry?.moon.x, telemetry?.moon.y, telemetry?.moon.z, scale])
 
   return (
     <Canvas

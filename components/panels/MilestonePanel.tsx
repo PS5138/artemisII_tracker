@@ -5,11 +5,13 @@ import { MILESTONES, getNextMilestone, getMilestoneDate, getMissionElapsed } fro
 
 function useCountdown(targetDate: Date | null) {
   const [countdown, setCountdown] = useState<{ d: number; h: number; m: number; s: number } | null>(null)
+  // Use the timestamp as the dependency — Date objects are new references every render
+  const targetMs = targetDate?.getTime() ?? null
 
   useEffect(() => {
-    if (!targetDate) return
+    if (targetMs === null) return
     function update() {
-      const diff = targetDate!.getTime() - Date.now()
+      const diff = targetMs! - Date.now()
       if (diff <= 0) {
         setCountdown({ d: 0, h: 0, m: 0, s: 0 })
         return
@@ -25,7 +27,7 @@ function useCountdown(targetDate: Date | null) {
     update()
     const t = setInterval(update, 1000)
     return () => clearInterval(t)
-  }, [targetDate])
+  }, [targetMs])
 
   return countdown
 }
