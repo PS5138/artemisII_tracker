@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useTrackerStore } from '@/lib/store'
 import { isMissionOver, MISSION } from '@/lib/mission'
 
@@ -50,8 +51,11 @@ export function TelemetryPanel() {
   const error = useTrackerStore((s) => s.telemetryError)
   const prevSpeed = useTrackerStore((s) => s.prevSpeed_kms)
   const lastFetch = useTrackerStore((s) => s.lastTelemetryFetch)
+  const [missionOver, setMissionOver] = useState(false)
 
-  if (isMissionOver()) {
+  useEffect(() => { setMissionOver(isMissionOver()) }, [])
+
+  if (missionOver) {
     return (
       <div className="rounded-xl bg-zinc-900/70 border border-zinc-700/40 p-5 backdrop-blur-sm">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-cyan-400 mb-3">Live Telemetry</h2>

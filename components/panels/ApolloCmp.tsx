@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useTrackerStore } from '@/lib/store'
 import { buildApolloComparison } from '@/lib/apollo'
 import { getMissionElapsed } from '@/lib/mission'
@@ -11,16 +12,21 @@ function fmt(n: number): string {
 
 export function ApolloCmp() {
   const telemetry = useTrackerStore((s) => s.telemetry)
+  const [elapsedHrs, setElapsedHrs] = useState<number | null>(null)
 
-  if (!telemetry) return null
+  useEffect(() => {
+    setElapsedHrs(getMissionElapsed().totalSeconds / 3600)
+  }, [telemetry]) // refresh whenever telemetry updates (every 60s)
 
-  const elapsedHrs = getMissionElapsed().totalSeconds / 3600
+  if (!telemetry || elapsedHrs === null) return null
+
   const cmp = buildApolloComparison(elapsedHrs, telemetry.distanceFromEarth_km)
-
   if (!cmp) return null
 
   const artemisAhead = cmp.diffKm > 0
   const diffAbs = Math.abs(cmp.diffKm)
+  const hrs = Math.floor(elapsedHrs)
+  const mins = Math.floor((elapsedHrs % 1) * 60)
 
   return (
     <div className="rounded-xl bg-zinc-900/70 border border-zinc-700/40 p-5 backdrop-blur-sm">
@@ -45,7 +51,7 @@ export function ApolloCmp() {
         } />
       </div>
       <p className="text-xs text-zinc-500 mb-4">
-        Where Apollo 13 was at this same mission elapsed time ({Math.floor(elapsedHrs)}h {Math.floor((elapsedHrs % 1) * 60)}m)
+        Where Apollo 13 was at this same mission elapsed time ({hrs}h {mins}m)
       </p>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
@@ -61,7 +67,6 @@ export function ApolloCmp() {
         </div>
       </div>
 
-      {/* Bar comparison */}
       {(() => {
         const maxDist = Math.max(cmp.artemisDistKm, cmp.apollo13DistKm, 1)
         const artemisPct = (cmp.artemisDistKm / maxDist) * 100

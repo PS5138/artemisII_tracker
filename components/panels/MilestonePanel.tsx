@@ -32,10 +32,11 @@ function useCountdown(targetDate: Date | null) {
   return countdown
 }
 
-// Tick elapsed hours once per second so completed milestones update in real time
+// Tick elapsed hours once per second; null until client mounts (avoids hydration mismatch)
 function useElapsedHrs() {
-  const [elapsedHrs, setElapsedHrs] = useState(() => getMissionElapsed().totalSeconds / 3600)
+  const [elapsedHrs, setElapsedHrs] = useState<number | null>(null)
   useEffect(() => {
+    setElapsedHrs(getMissionElapsed().totalSeconds / 3600)
     const t = setInterval(() => setElapsedHrs(getMissionElapsed().totalSeconds / 3600), 1000)
     return () => clearInterval(t)
   }, [])
@@ -50,7 +51,7 @@ export function MilestonePanel() {
   const pad = (n: number) => String(n).padStart(2, '0')
 
   const completedIds = new Set(
-    MILESTONES.filter((m) => m.offsetHrs <= elapsedHrs).map((m) => m.id)
+    elapsedHrs === null ? [] : MILESTONES.filter((m) => m.offsetHrs <= elapsedHrs).map((m) => m.id)
   )
 
   return (

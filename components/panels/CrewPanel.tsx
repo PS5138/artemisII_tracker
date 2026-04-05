@@ -15,17 +15,15 @@ function getCurrentActivity(elapsedHrs: number): string {
 }
 
 export function CrewPanel() {
-  const [elapsedHrs, setElapsedHrs] = useState(() => getMissionElapsed().totalSeconds / 3600)
+  const [elapsedHrs, setElapsedHrs] = useState<number | null>(null)
 
   useEffect(() => {
-    // Update activity label every minute
-    const t = setInterval(() => {
-      setElapsedHrs(getMissionElapsed().totalSeconds / 3600)
-    }, 60_000)
+    setElapsedHrs(getMissionElapsed().totalSeconds / 3600)
+    const t = setInterval(() => setElapsedHrs(getMissionElapsed().totalSeconds / 3600), 60_000)
     return () => clearInterval(t)
   }, [])
 
-  const activity = getCurrentActivity(elapsedHrs)
+  const activity = getCurrentActivity(elapsedHrs ?? 0)
 
   return (
     <div className="rounded-xl bg-zinc-900/70 border border-zinc-700/40 p-5 backdrop-blur-sm">

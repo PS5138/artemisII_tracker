@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { isMissionOver } from '@/lib/mission'
 import { DataPoller } from '@/lib/DataPoller'
@@ -20,7 +20,9 @@ const SpaceScene = dynamic(
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const missionOver = isMissionOver()
+  const [missionOver, setMissionOver] = useState(false)
+
+  useEffect(() => { setMissionOver(isMissionOver()) }, [])
 
   return (
     <>
