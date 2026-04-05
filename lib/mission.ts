@@ -47,7 +47,7 @@ export const MILESTONES = [
   { id: 'record', label: 'Human Distance Record', offsetHrs: 70, description: 'Orion breaks Apollo 13\'s 400,171 km record — farthest humans from Earth' },
   { id: 'ld', label: 'Lunar Close Approach', offsetHrs: 73, description: 'Orion swings within ~8,900 km of the Moon' },
   { id: 'return', label: 'Return Trajectory Burn', offsetHrs: 80, description: 'Orion burns to set course for Earth' },
-  { id: 'splashdown', label: 'Splashdown', offsetHrs: 214, description: 'Crew module splashes down in Pacific Ocean' },
+  { id: 'splashdown', label: 'Splashdown', offsetHrs: 211.4, description: 'Crew module splashes down in Pacific Ocean' },
 ]
 
 export function getMissionElapsed(from = new Date()): {
