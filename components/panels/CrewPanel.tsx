@@ -4,14 +4,15 @@ import { useEffect, useState } from 'react'
 import { MISSION, getMissionElapsed } from '@/lib/mission'
 
 function getCurrentActivity(elapsedHrs: number): string {
-  if (elapsedHrs < 1.5) return 'Launch and ascent'
-  if (elapsedHrs < 6)   return 'Spacecraft checkout and systems verification'
-  if (elapsedHrs < 24)  return 'Translunar coast — trajectory monitoring'
-  if (elapsedHrs < 48)  return 'Translunar coast — science and observations'
-  if (elapsedHrs < 66)  return 'Approaching lunar sphere of influence'
-  if (elapsedHrs < 78)  return 'Lunar proximity operations'
-  if (elapsedHrs < 90)  return 'Return trajectory burn and Earth-bound coast'
-  return 'Coast phase — Earth approach'
+  if (elapsedHrs < 0.17) return 'Launch and ascent'
+  if (elapsedHrs < 3.5)  return 'Earth orbit — spacecraft checkout and systems verification'
+  if (elapsedHrs < 5)    return 'Trans-Lunar Injection burn — departing Earth orbit'
+  if (elapsedHrs < 96)   return 'Outbound coast — translunar trajectory, science and observations'
+  if (elapsedHrs < 118)  return 'Approaching the Moon'
+  if (elapsedHrs < 125)  return 'Lunar flyby — closest approach, free-return slingshot around the Moon'
+  if (elapsedHrs < 200)  return 'Return coast — coasting back toward Earth under gravity'
+  if (elapsedHrs < 215)  return 'Earth approach — re-entry preparation and systems checkout'
+  return 'Re-entry and splashdown'
 }
 
 export function CrewPanel() {

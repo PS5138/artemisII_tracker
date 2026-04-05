@@ -1,10 +1,10 @@
 export const MISSION = {
   launch: new Date('2026-04-01T22:35:12Z'),
-  splashdown: new Date('2026-04-10T18:00:00Z'),
+  splashdown: new Date('2026-04-11T00:21:00Z'), // confirmed from live tracker: 9d 2h mission
   orionHorizonsId: '-1024',
   moonHorizonsId: '301',
   humanDistanceRecord_km: 400171, // Apollo 13 (1970)
-  targetMaxDistance_km: 406000,
+  targetMaxDistance_km: 407300,   // confirmed from live tracker
   crew: [
     {
       name: 'Reid Wiseman',
@@ -40,14 +40,57 @@ export const MISSION = {
 export type CrewMember = (typeof MISSION.crew)[number]
 
 // Mission milestones — times in hours after launch
+// Timings cross-referenced against issinfo.net live tracker on 2026-04-05
+// (screenshot at T+3d 17h showed Lunar Flyby 1d 8h away → ~T+121h)
 export const MILESTONES = [
-  { id: 'launch', label: 'Launch', offsetHrs: 0, description: 'Artemis II lifts off from Kennedy Space Center' },
-  { id: 'staging', label: 'Upper Stage Separation', offsetHrs: 0.17, description: 'ICPS separates; Orion on its own' },
-  { id: 'tli', label: 'Trans-Lunar Injection', offsetHrs: 1.5, description: 'Burn sends Orion toward the Moon' },
-  { id: 'record', label: 'Human Distance Record', offsetHrs: 70, description: 'Orion breaks Apollo 13\'s 400,171 km record — farthest humans from Earth' },
-  { id: 'ld', label: 'Lunar Close Approach', offsetHrs: 73, description: 'Orion swings within ~8,900 km of the Moon' },
-  { id: 'return', label: 'Return Trajectory Burn', offsetHrs: 80, description: 'Orion burns to set course for Earth' },
-  { id: 'splashdown', label: 'Splashdown', offsetHrs: 211.4, description: 'Crew module splashes down in Pacific Ocean' },
+  {
+    id: 'launch',
+    label: 'Launch',
+    offsetHrs: 0,
+    description: 'Artemis II lifts off from Kennedy Space Center on SLS Block 1',
+  },
+  {
+    id: 'staging',
+    label: 'Upper Stage Separation',
+    offsetHrs: 0.17,
+    description: 'ICPS separates; Orion continues under its own power',
+  },
+  {
+    id: 'checkout',
+    label: 'Earth Orbit & Checkout',
+    offsetHrs: 1,
+    description: 'Crew completes 1.5 Earth orbits verifying all Orion systems before departing',
+  },
+  {
+    id: 'tli',
+    label: 'Trans-Lunar Injection',
+    offsetHrs: 3.5,
+    description: 'Engine burn sends Orion on a free-return trajectory toward the Moon',
+  },
+  {
+    id: 'ld',
+    label: 'Lunar Flyby',
+    offsetHrs: 121,
+    description: 'Orion swings around the far side of the Moon — the Moon\'s gravity redirects it toward Earth',
+  },
+  {
+    id: 'record',
+    label: 'Human Distance Record',
+    offsetHrs: 123,
+    description: 'Orion reaches ~407,300 km — the farthest any human has ever been from Earth',
+  },
+  {
+    id: 'return',
+    label: 'Return Coast',
+    offsetHrs: 125,
+    description: 'Orion coasts back toward Earth, accelerating as Earth\'s gravity pulls it home',
+  },
+  {
+    id: 'splashdown',
+    label: 'Splashdown',
+    offsetHrs: 217.8,
+    description: 'Orion uses skip re-entry to shed speed across two atmosphere passes, splashing down in the Pacific',
+  },
 ]
 
 export function getMissionElapsed(from = new Date()): {
